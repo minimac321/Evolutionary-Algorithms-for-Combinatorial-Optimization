@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7952c703-37c8-4cc8-bb34-2d6efd906a6a" name="Default Changelist" comment="" />
+    <list default="true" id="7952c703-37c8-4cc8-bb34-2d6efd906a6a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/json_20190722.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Driver.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/Driver.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation.iml" beforeDir="false" afterPath="$PROJECT_DIR$/implementation.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Driver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Driver.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1Z4RrjXybflmYpd9hTEANf8IyAD" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -15,19 +31,37 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="findjar.last.used.dir" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/json-20190722.jar!/" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.build" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Shawn Cole\Documents\UCT '20\Evolutionary Computing\Assignment" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Shawn Cole\Documents\UCT '20\Evolutionary Computing\Assignment" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="Driver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Driver" />
       <module name="implementation" />
-      <option name="PROGRAM_PARAMETERS" value="-configuration ga_default_11.json" />
+      <option name="PROGRAM_PARAMETERS" value="-configuration sa_default_05" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -48,7 +82,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1584096580922</updated>
-      <workItem from="1585318247974" duration="3540000" />
+      <workItem from="1585318247974" duration="5583000" />
+      <workItem from="1585554675345" duration="90000" />
+      <workItem from="1585555769929" duration="5305000" />
+      <workItem from="1585564301265" duration="14518000" />
+      <workItem from="1585662892302" duration="271000" />
+      <workItem from="1585737424261" duration="5003000" />
     </task>
     <servers />
   </component>
@@ -56,34 +95,70 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="137" y="19" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585318793358">
+    <state x="275" y="38" key="#HTTP_Proxy" timestamp="1585564553588">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="137" y="19" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1585318793358" />
+    <state x="275" y="38" key="#HTTP_Proxy/0.0.1366.728@0.0.1366.728" timestamp="1585564553588" />
+    <state x="275" y="22" key="#Notifications" timestamp="1585564463878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="275" y="22" key="#Notifications/0.0.1366.728@0.0.1366.728" timestamp="1585564463878" />
+    <state x="137" y="19" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585742452324">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="137" y="19" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1585742452324" />
+    <state x="589" y="308" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog" timestamp="1585563773823">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="589" y="308" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog/0.0.1366.728@0.0.1366.728" timestamp="1585563773823" />
+    <state x="453" y="65" key="#com.intellij.ide.util.MemberChooser" timestamp="1585557512711">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="453" y="65" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1585557512711" />
     <state x="531" y="253" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585318252622">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="531" y="253" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1366.728@0.0.1366.728" timestamp="1585318252622" />
-    <state width="1323" height="180" key="GridCell.Tab.0.bottom" timestamp="1585321908844">
+    <state x="363" y="100" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1585563975732">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="180" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1585321908844" />
-    <state width="1323" height="180" key="GridCell.Tab.0.center" timestamp="1585321908844">
+    <state x="363" y="100" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1366.728@0.0.1366.728" timestamp="1585563975732" />
+    <state x="463" y="105" key="FileChooserDialogImpl" timestamp="1585566311794">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="180" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1585321908844" />
-    <state width="1323" height="180" key="GridCell.Tab.0.left" timestamp="1585321908844">
+    <state x="463" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1585566311794" />
+    <state width="1323" height="180" key="GridCell.Tab.0.bottom" timestamp="1585742437949">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="180" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1585321908844" />
-    <state width="1323" height="180" key="GridCell.Tab.0.right" timestamp="1585321908844">
+    <state width="1323" height="180" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1585742437949" />
+    <state width="1323" height="180" key="GridCell.Tab.0.center" timestamp="1585742437949">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="180" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1585321908844" />
-    <state x="260" y="13" key="SettingsEditor" timestamp="1585321791830">
+    <state width="1323" height="180" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1585742437949" />
+    <state width="1323" height="180" key="GridCell.Tab.0.left" timestamp="1585742437949">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="260" y="13" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1585321791830" />
+    <state width="1323" height="180" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1585742437949" />
+    <state width="1323" height="180" key="GridCell.Tab.0.right" timestamp="1585742437949">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="180" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1585742437949" />
+    <state x="447" y="126" key="NewModule_or_Project.wizard" timestamp="1585563885671">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="447" y="126" key="NewModule_or_Project.wizard/0.0.1366.728@0.0.1366.728" timestamp="1585563885671" />
+    <state x="262" y="0" key="SettingsEditor" timestamp="1585566490952">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="262" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1585566490952" />
     <state x="320" y="82" key="SettingsEditor/0.0.1680.1010@0.0.1680.1010" timestamp="1584096667745" />
+    <state x="486" y="257" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1585566489474">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="486" y="257" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1366.728@0.0.1366.728" timestamp="1585566489474" />
+    <state x="339" y="162" key="run.anything.popup" timestamp="1585556896891">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="162" key="run.anything.popup/0.0.1366.728@0.0.1366.728" timestamp="1585556896891" />
   </component>
 </project>

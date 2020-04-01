@@ -1,28 +1,95 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Random;
 
 
 public class Driver {
 
-    public static void main (String[] args){
-        //MersenneTwister mt = new MersenneTwister();
-        //System.out.println(mt.nextGaussian() + ": "+args[0]);
+    public static item[] Items;
+
+
+    public static void main (String[] args) {
+
+        PopulateItems(150);
+
+//        SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(10000, 0.0001, "Ayy");
+//        MersenneTwister randomGenerator = new MersenneTwister(System.currentTimeMillis());
+//
+//        SolutionInstance currentInstance = new SolutionInstance(Items, 150, 822);
+//        currentInstance.Solution[5] = true;
+//        System.out.println(currentInstance.toString());
+//
+//        try {
+//            SolutionInstance c = currentInstance.clone();
+//            System.out.println("Clone method: " + c.toString());
+//        } catch (CloneNotSupportedException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        boolean[] b = new boolean[150];
+//        Arrays.fill(b, false);
+//        b[1] = true;
+//
+//
+//        SolutionInstance nextInstance = new SolutionInstance(Items, 150, 822, b);
+//        System.out.println(nextInstance.toString());
+//
+//
+//
+//
+//        double actualEnergy = simulatedAnnealing.getEnergy(currentInstance);
+//        double newEnergy = simulatedAnnealing.getEnergy(nextInstance);
+//
+//        double actualW = simulatedAnnealing.getWeight(currentInstance);
+//        double newW = simulatedAnnealing.getWeight(nextInstance);
+//
+//        System.out.printf("New energy = %6f; Old Energy = %6f\n", newEnergy, actualEnergy);
+//        System.out.printf("New weight = %6f; Old weight = %6f\n", newW, actualW);
+//
+//        double check = simulatedAnnealing.AcceptanceProbability(actualEnergy, newEnergy, 10000) ;
+//        double rnd =  randomGenerator.nextDouble();
+//
+//
+//        System.out.printf(" %6f compared to %6f\n", check, rnd);
+//
+//        if (check  > rnd) {
+//            System.out.println("Accepted");
+//            //currentInstance = nextInstance;
+//        }
+//
+//        double check2 = simulatedAnnealing.AcceptanceProbability(newEnergy, actualEnergy, 10000) ;
+//        System.out.println(check2);
+//
+//        //
+//        System.exit(0);
 
         if (args[0].equals("-configuration")){
-            // Run individual whoose name is args[1]
+
             String name = args[1] ;
-            System.out.printf("Loading and running %s now\n", name);
-            // find file name and run
+            System.out.printf("Loading and running: %s now\n", name);
+
+            if (name.contains("ga")){
+                runGA(name);
+            }
+            else if (name.contains("sa")){
+                runSA(name);
+            }
+            else if (name.contains("pso")){
+                runPSO(name);
+            }
 
             // Make report
-            try{
-                generateReport(true, name.substring(0, name.length()-5));
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
+//            try{
+//                generateReport(true, name.substring(0, name.length()-5));
+//            }
+//            catch (IOException e){
+//                e.printStackTrace();
+//            }
 
         }else if(args[0].equals("-search_best_configuration")){
             // Run all possible configurations and identity best
@@ -31,6 +98,68 @@ public class Driver {
             String file_name = "ga|pso|sa" +"_best.json";
             // Write best one to .json
         }
+
+    }
+
+    private static void runPSO(String name) {
+        ;
+    }
+
+    private static void runSA(String name) {
+        try{
+            // find file name and run
+            FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
+                    "Computing/Assignment/sa_default/" + name + ".json");
+            BufferedReader br = new BufferedReader(file);
+
+            // JSON is all on 1 line
+            String json = br.readLine();
+            System.out.println(json);
+
+            JSONObject obj = new JSONObject(json);
+            double temperature = Double.parseDouble(obj.getString("initial_temperature"));
+            double coolRate = Double.parseDouble(obj.getString("cooling_rate"));
+            String config = obj.getString("configuration");
+
+            SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(temperature, coolRate, config);
+            simulatedAnnealing.execute();
+
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void runGA(String name) {
+        ;
+    }
+
+    private static void PopulateItems(int size) {
+        Items = new item[size];
+        try{
+            FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
+                    "Computing/Assignment/data/knapsack_instance.csv");
+            BufferedReader br = new BufferedReader(file);
+            // Skip column headers
+            String[] line = br.readLine().split(";");
+
+            for (int i = 0; i<Items.length; i++){
+                line = br.readLine().split(";");
+                int w = Integer.parseInt(line[1]);
+                int v = Integer.parseInt(line[2]);
+
+                Items[i] = new item(i, w, v);
+                //System.out.printf("Item created with Id: %d, weight: %d, value: %d\n", i, w, v); //trace
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
     }
 
