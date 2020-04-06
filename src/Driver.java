@@ -10,6 +10,7 @@ import java.util.Date;
 public class Driver {
 
     public static item[] Items;
+    public static final int max_iterations = 10000;
 
 
     public static void main (String[] args) {
@@ -102,7 +103,34 @@ public class Driver {
     }
 
     private static void runPSO(String name) {
-        ;
+        try{
+            // find file name and run
+            FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
+                    "Computing/Assignment/pso_default/" + name + ".json");
+            BufferedReader br = new BufferedReader(file);
+
+            // JSON is all on 1 line
+            String json = br.readLine();
+            System.out.println(json);
+
+            JSONObject obj = new JSONObject(json);
+            int particleNums = obj.getInt("number_particles");
+            int minVelocity = obj.getInt("minimum_velocity");
+            int maxVelocity = obj.getInt("maximum_velocity");
+            double c1 =obj.getDouble("c1");
+            double c2 = obj.getDouble("c2");
+            double inertia =obj.getDouble("inertia");
+            String config = obj.getString("configuration");
+
+            ParticleSwarmOptimization PSO = new ParticleSwarmOptimization(particleNums, minVelocity,maxVelocity, c1,
+                    c2, inertia, config, max_iterations);
+
+            PSO.execute();
+
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     private static void runSA(String name) {

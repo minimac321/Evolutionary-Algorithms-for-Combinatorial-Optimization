@@ -39,16 +39,6 @@ public class SolutionInstance implements Cloneable {
         fitness = calculateFitness();
     }
 
-//    public SolutionInstance(SolutionInstance s){
-//        this.Items = s.Items;
-//        this.numItems = s.numItems;
-//        this.capacity = s.capacity;
-//        this.Solution = s.Solution;
-//
-//        totalWeight = calculateWeight();
-//        fitness = calculateFitness();
-//    }
-
 
     public boolean getBit(int iPos){
         return Solution[iPos];
@@ -58,6 +48,21 @@ public class SolutionInstance implements Cloneable {
         return Solution;
     }
 
+    public void setPosition(boolean[] pos){
+        this.Solution = pos.clone();
+        calculateFitness();
+        calculateWeight();
+    }
+
+    public String stringSolution(){
+        String s = "";
+
+        for (boolean x: Solution){
+            if(x) s +="1";
+            else s +="0";
+        }
+        return s;
+    }
 
     @Override
     protected SolutionInstance clone() throws CloneNotSupportedException {
@@ -65,7 +70,7 @@ public class SolutionInstance implements Cloneable {
     }
 
     public boolean isTooHeavy(){
-        return (totalWeight >= capacity);
+        return (totalWeight > capacity);
     }
 
     public int calculateWeight() {
@@ -86,7 +91,7 @@ public class SolutionInstance implements Cloneable {
         for (int i = 0; i < numItems; i++) {
             if (Solution[i]) profit += Items[i].getValue();
         }
-        fitness = profit;
+        this.fitness = profit;
         return profit;
     }
 

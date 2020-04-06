@@ -98,8 +98,6 @@ public class SimulatedAnnealing {
 
 
 
-
-
     }
 
     public SolutionInstance getRandomInstance(SolutionInstance s) {
