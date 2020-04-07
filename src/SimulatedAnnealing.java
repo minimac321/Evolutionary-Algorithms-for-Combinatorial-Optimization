@@ -37,7 +37,7 @@ public class SimulatedAnnealing {
         double temperature = maxTemp;
 
         // Make a starting instance for
-        currentInstance = new SolutionInstance(Driver.Items, 150, 822);
+        currentInstance = new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity);
         System.out.println("Initial Solution: " + currentInstance.toString());
 
         try {

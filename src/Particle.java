@@ -5,8 +5,7 @@ import java.util.Arrays;
 public class Particle {
     public String Position;
     public double[] Velocity;
-    //public double[] fitness;
-    // //////////////
+
     public int minVelocity;
     public int maxVelocity;
     public double c1;
@@ -129,50 +128,49 @@ public class Particle {
             r1 = ParticleSwarmOptimization.randomGenerator.nextDouble();
             r2 = ParticleSwarmOptimization.randomGenerator.nextDouble();
 
-            current = (int)(currentInstance.stringSolution().charAt(i));
-            pBest = (int)(pBestInstance.stringSolution().charAt(i));
-            gBest = (int)(gBestInstance.stringSolution().charAt(i));
+            current = (int) (currentInstance.stringSolution().charAt(i));
+            pBest = (int) (pBestInstance.stringSolution().charAt(i));
+            gBest = (int) (gBestInstance.stringSolution().charAt(i));
 
-            Velocity[i] = Velocity[i]*inertia + c1*r1*(pBest - current ) + c2*r2*(gBest - current);
-
+            Velocity[i] = Velocity[i] * inertia + c1 * r1 * (pBest - current) + c2 * r2 * (gBest - current);
+        }
             // trace
             //System.out.println("Velocities: " + Arrays.toString(Arrays.copyOf(Velocity, 5)));
 
-            pos = new boolean[150];
-            threshold = 0.25;
+        pos = new boolean[150];
+        threshold = 0.25;
 
-            // ISSUE HERE // - find correct algorithm for when to choose
+        // ISSUE HERE // - find correct algorithm for when to choose
+        for(int v = 0; v < pos.length; v++) {
+            // sigmoid(Velocity[v])
+            if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold){
+                pos[v] = true;
+            }
+            else{
+                pos[v] = false;
+            }
+        }
+
+        //System.out.printf("Before: %d - %s\n", currentInstance.fitness, currentInstance.stringSolution());
+        currentInstance.setPosition(pos);
+        currentInstance.calculateWeight();
+        //System.out.printf("After: %d - %s\n", currentInstance.calculateFitness(), currentInstance.stringSolution());
+
+        int iRetry = 0;
+        while (currentInstance.isTooHeavy()){
+            iRetry++;
+            threshold-=0.03;
             for(int v = 0; v < Velocity.length; v++) {
                 // sigmoid(Velocity[v])
-                if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold){
-                    pos[v] = true;
-                }
-                else{
-                    pos[v] = false;
-                }
+                if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold) pos[v] = true;
+                else pos[v] = false;
             }
-            //System.out.printf("Before: %d - %s\n", currentInstance.fitness, currentInstance.stringSolution());
             currentInstance.setPosition(pos);
-            currentInstance.calculateWeight();
-            //System.out.printf("After: %d - %s\n", currentInstance.calculateFitness(), currentInstance.stringSolution());
+        } // end while
 
-            int iRetry = 0;
-            while (currentInstance.isTooHeavy()){
-                iRetry++;
-                threshold-=0.03;
+        //trace
+        //System.out.printf("Retry occurred %d times\n", iRetry);
 
-                for(int v = 0; v < Velocity.length; v++) {
-                    // sigmoid(Velocity[v])
-                    if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold) pos[v] = true;
-                    else pos[v] = false;
-                }
-                currentInstance.setPosition(pos);
-
-            } // end while
-            //trace
-            //System.out.printf("Retry occurred %d times\n", iRetry);
-
-        }
     }
 
 }

@@ -31,6 +31,7 @@ public class ParticleSwarmOptimization {
         Swarm = new Particle[particleNums];
     }
 
+    // Best answer so far is 812
     public void execute(){
         boolean bChange;
         ArrayList<Integer> gBestArray= new ArrayList<Integer>();
@@ -40,7 +41,7 @@ public class ParticleSwarmOptimization {
         // Must also make first addition in all arrays
         int iMax = Integer.MIN_VALUE;
 
-        for (int iter = 0; iter < 500; iter++){
+        for (int iter = 0; iter < Driver.max_iterations; iter++){
 
             System.out.printf("***************** Iteration %d *****************\n", iter);
 
@@ -87,7 +88,7 @@ public class ParticleSwarmOptimization {
         }// end iteration loop
 
         SolutionInstance bestSolution = Swarm[0].gBestInstance;
-        System.out.printf("Best solution value is: %d\n" + "Knapsack : %s\n", bestSolution.fitness, bestSolution.toString());
+        System.out.printf("Knapsack: %s\n" + "Best solution value is: %d\n", bestSolution.toString(), bestSolution.fitness);
         System.out.println(gBestArray);
 
     }
@@ -95,7 +96,7 @@ public class ParticleSwarmOptimization {
     public void ZeroInitialize() {
         for (int i = 0; i < particleNums; i++) {
             Particle particle = new Particle(minVelocity, maxVelocity,c1, c2, inertia,
-                    new SolutionInstance(Driver.Items, 150, 822));
+                    new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity));
             Swarm[i] = particle;
         }
     }
