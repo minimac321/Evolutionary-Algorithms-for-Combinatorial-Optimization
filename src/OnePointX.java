@@ -1,7 +1,7 @@
-import java.util.Arrays;
+// One point cross over working correctly, Tested.
 
 public class OnePointX {
-    public static Chromosome[] cross(Chromosome[] parentArray, int cross_point) {
+    public static Chromosome cross(Chromosome[] parentArray, int cross_point, int number) {
         Chromosome[] Children = new Chromosome[2];
 
         boolean[] p1 = parentArray[0].gene.Solution;
@@ -23,6 +23,12 @@ public class OnePointX {
         Children[1] = new Chromosome(new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity,
                 child2));
 
-        return Children;
+        if (Children[0] == null || Children[1] == null) {
+            System.out.println("Null error @ OnePoint");
+            System.exit(0);
+        }
+
+        return Children[number];
     }
+
 }

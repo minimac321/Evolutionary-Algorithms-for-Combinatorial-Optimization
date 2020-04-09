@@ -76,7 +76,7 @@ public class SolutionInstance implements Cloneable {
     public int calculateWeight() {
         int weight = 0;
 
-        for (int i = 0; i < numItems; i++) {
+        for (int i = 0; i < Driver.num_of_items; i++) {
             if (Solution[i] == true) {
                 weight += Items[i].getWeight();
             }
@@ -88,10 +88,10 @@ public class SolutionInstance implements Cloneable {
     public int calculateFitness() {
         int profit = 0;
 
-        for (int i = 0; i < numItems; i++) {
+        for (int i = 0; i < Driver.num_of_items; i++) {
             if (Solution[i]) profit += Items[i].getValue();
         }
-        this.fitness = profit;
+        fitness = profit;
         return profit;
     }
 

@@ -13,6 +13,9 @@ public class Driver {
     public static void main (String[] args) {
 
         PopulateItems(150);
+        //System.out.println(Items[0].toString());
+        //System.out.println(Items[149].toString());
+
 
         if (args[0].equals("-configuration")){
 

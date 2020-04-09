@@ -10,17 +10,22 @@ public class Chromosome implements Comparable<Chromosome> {
         this.gene = gene;
         Position = gene.stringSolution();
         fitness = gene.calculateFitness();
+        weight = gene.calculateWeight();
     }
 
     public void generateRandom() {
-        boolean[] pos = new boolean[Driver.num_of_items];
-        Arrays.fill(pos, false);
+        do{
+            boolean[] pos = new boolean[Driver.num_of_items];
+            Arrays.fill(pos, false);
 
-        for(int c = 0; c < Driver.num_of_items; c++) {
-            if (GeneticAlgorithm.randomGenerator.nextDouble() < 0.2) pos[c] = true;
-            else pos[c] = false;
-        }
-        this.gene.setPosition(pos);
+            for(int c = 0; c < Driver.num_of_items; c++) {
+                if (GeneticAlgorithm.randomGenerator.nextDouble() < 0.29) pos[c] = true;
+                else pos[c] = false;
+            }
+            this.gene.setPosition(pos);
+            this.gene.calculateWeight();
+        } while (gene.isTooHeavy());
+
     }
 
     public void updateMetrics(){
@@ -40,37 +45,12 @@ public class Chromosome implements Comparable<Chromosome> {
         return gene.totalWeight;
     }
 
-//    public Chromosome[] doCrossover(Chromosome chromosome) {
-//        char[] charArray01 = gene.toCharArray();
-//        char[] charArray02 = chromosome.gene.toCharArray();
-//
-//        int pivot = Configuration.instance.randomGenerator.nextInt(charArray01.length);
-//        char[] child01 = new char[gene.length()];
-//        char[] child02 = new char[gene.length()];
-//
-//        System.arraycopy(charArray01, 0, child01, 0, pivot);
-//        System.arraycopy(charArray02, pivot, child01, pivot, child01.length - pivot);
-//        System.arraycopy(charArray02, 0, child02, 0, pivot);
-//        System.arraycopy(charArray01, pivot, child02, pivot, child02.length - pivot);
-//
-//        return new Chromosome[]{new Chromosome(String.valueOf(child01)),
-//                new Chromosome(String.valueOf(child02))};
-//    }
-//
-//    public Chromosome doMutation() {
-//        char[] charArray = this.gene.toCharArray();
-//        int index = Configuration.instance.randomGenerator.nextInt(charArray.length);
-//        int delta = Configuration.instance.randomGenerator.nextInt() % 90 + 32;
-//        charArray[index] = ((char) ((charArray[index] + delta) % 122));
-//        return new Chromosome(String.valueOf(charArray));
-//    }
-
     public int compareTo(Chromosome chromosome) {
         // Descending sorting, flipped minus sign
         if (this.fitness < chromosome.fitness) {
             return 1;
         }
-        if (this.fitness > chromosome.gene.fitness) {
+        if (this.fitness > chromosome.fitness) {
             return -1;
         }
         return 0;
