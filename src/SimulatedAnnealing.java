@@ -5,16 +5,21 @@ public class SimulatedAnnealing {
     public double maxTemp;
     public double coolRate;
     public String config;
+    public String reportString;
 
     public final double minTemp = 1;
 
     // Random Number Generator
     public MersenneTwister randomGenerator = new MersenneTwister();
 
+    public SolutionInstance[] report_array = new SolutionInstance[Driver.max_iterations];
+
     public SimulatedAnnealing(double maxTemp, double coolRate, String config){
         this.maxTemp = maxTemp;
         this.coolRate = coolRate;
         this.config = config;
+        this.reportString =
+                "SA  |  Max Temp (" + String.valueOf(maxTemp) + ")  |  Cooling Rate (" + String.valueOf(coolRate) + ")";
     }
 
     public int getEnergy(SolutionInstance x) {
@@ -33,12 +38,12 @@ public class SimulatedAnnealing {
 
     // We want to find the highest fitness, while still having a low enough weight
     // fitness ~= energy
-    public void execute(){
+    public SolutionInstance execute(boolean generateReport){
         double temperature = maxTemp;
 
         // Make a starting instance for
         currentInstance = new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity);
-        System.out.println("Initial Solution: " + currentInstance.toString());
+        //System.out.println("Initial Solution: " + currentInstance.toString());
 
         try {
             bestInstance = currentInstance.clone();
@@ -47,13 +52,12 @@ public class SimulatedAnnealing {
         }
 
         int iCounter = 0;
-        System.out.println("\nStart S.A.");
+        //System.out.println("\nStart S.A.");
         while (temperature > minTemp) {
-            iCounter ++;
-            System.out.printf("Current Temp %5.2f\n", temperature);
+            //System.out.printf("Current Temp %5.2f\n", temperature);
 
             SolutionInstance nextInstance = getRandomInstance(currentInstance);
-            System.out.println("Random Instance: " + nextInstance.toString());
+            //System.out.println("Random Instance: " + nextInstance.toString());
 
             double actualEnergy = getEnergy(currentInstance);
             double newEnergy = getEnergy(nextInstance);
@@ -80,24 +84,29 @@ public class SimulatedAnnealing {
             if (getEnergy(currentInstance) > getEnergy(bestInstance)) {
                 try {
                     bestInstance = currentInstance.clone();
-                    System.out.printf("New Best: temperature = %5.2f | weight = %5d | fitness = %5d \n", temperature,
-                            bestInstance.calculateWeight(), bestInstance.fitness );
+                    //System.out.printf("New Best: temperature = %5.2f | weight = %5d | fitness = %5d \n", temperature, bestInstance.calculateWeight(), bestInstance.fitness );
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
 
             }
 
+            try {
+                report_array[iCounter] = bestInstance.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+
             temperature -= temperature *(1 - coolRate);
+            iCounter ++;
         }
 
-        System.out.printf("Finished with Simulation after %d iterations\n", iCounter);
-        System.out.printf("Optimal Output: temp = %5.2f | weight = %5d | fitness = %5d \n", temperature,
-                bestInstance.calculateWeight(), bestInstance.fitness );
-        System.out.println(bestInstance.toString());
+        //System.out.printf("Finished with Simulation after %d iterations\n", iCounter);
+        //System.out.printf("Optimal Output: temp = %5.2f | weight = %5d | fitness = %5d \n", temperature,
+        // bestInstance.calculateWeight(), bestInstance.fitness );
+        //System.out.println(bestInstance.toString());
 
-
-
+        return bestInstance;
     }
 
     public SolutionInstance getRandomInstance(SolutionInstance s) {

@@ -1,7 +1,10 @@
 import org.json.JSONObject;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Driver {
     public static item[] Items;
@@ -10,12 +13,14 @@ public class Driver {
     public static final int max_capacity = 822;
     public static final int best_optimum = 997;
 
-    public static void main (String[] args) {
+    public static JSONObject obj;
+
+    public static void main (String[] args) throws IOException {
+        SolutionInstance result = null;
 
         PopulateItems(150);
         //System.out.println(Items[0].toString());
         //System.out.println(Items[149].toString());
-
 
         if (args[0].equals("-configuration")){
 
@@ -23,33 +28,94 @@ public class Driver {
             System.out.printf("Loading and running: %s now\n", name);
 
             if (name.contains("ga")){
-                runGA(name);
+                result = runGA(name, true);
             }
             else if (name.contains("sa")){
-                runSA(name);
+                result = runSA(name, true);
             }
             else if (name.contains("pso")){
-                runPSO(name);
+                result = runPSO(name, true);
             }
-            // Make report
-//            try{
-//                generateReport(true, name.substring(0, name.length()-5));
-//            }
-//            catch (IOException e){
-//                e.printStackTrace();
-//            }
+
 
         }else if(args[0].equals("-search_best_configuration")){
-            // Run all possible configurations and identity best
-            System.out.printf("Running all default config's and finding Best.");
+            String algorithm_name = args[1];
+            int num_of_cases = 0;
 
-            String file_name = "ga|pso|sa" +"_best.json";
-            // Write best one to .json
+            if (algorithm_name.equals("ga")) num_of_cases = 28;
+            else num_of_cases = 25;
+
+            // Run all possible configurations and identity best
+            //System.out.printf("Running all default %s configurations\n", algorithm_name);
+            ArrayList<SolutionInstance> bestResults = new ArrayList<>();
+
+            for (int test = 1; test <= num_of_cases; test++) {
+                String num_value = "";
+                if (test < 10) num_value += "0";
+                num_value += String.valueOf(test);
+                String name = algorithm_name + "_default_" + num_value;
+
+                System.out.printf("Loading and running: %s now\n", name);
+
+                if (algorithm_name.equals("ga")){
+                    result = runGA(name, false);
+                    bestResults.add(result);
+                }
+                else if (algorithm_name.equals("sa")){
+                    result = runSA(name, false);
+                    bestResults.add(result);
+                }
+                else if (algorithm_name.equals("pso")){
+                    result = runPSO(name, false);
+                    bestResults.add(result);
+                }
+            }
+
+            int max = Integer.MIN_VALUE;
+            int iPos = -1;
+            for (int i = 0; i < bestResults.size(); i++) {
+                if (max < bestResults.get(i).fitness){
+                    max = bestResults.get(i).fitness;
+                    iPos = i;
+                }
+            }
+
+            String num = "";
+            if (iPos+1 < 10) num += "0";
+            num += String.valueOf(iPos+1);
+
+            assert result != null;
+            System.out.printf("Best Solution is: %s, Score - %d\n", num, max);
+
+            makeBestJSONFile(algorithm_name, num);
         }
 
     }
 
-    private static void runPSO(String name) {
+    public static void makeBestJSONFile(String algorithm_name, String number) {
+        try{
+            FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
+                    "Computing/Assignment/" + algorithm_name + "_default/" + algorithm_name + "_default_" + number + ".json");
+            BufferedReader br = new BufferedReader(file);
+
+            String json = br.readLine();
+            obj = new JSONObject(json);
+
+            FileWriter f = new FileWriter(algorithm_name + "_best.json");
+
+            f.write(obj.toString());
+            f.close();
+            System.out.println("System printed: " + obj.toString());
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static SolutionInstance runPSO(String name, boolean generateReport) {
         try{
             // find file name and run
             FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
@@ -58,7 +124,7 @@ public class Driver {
 
             // JSON is all on 1 line
             String json = br.readLine();
-            System.out.println(json);
+            //System.out.println(json);
 
             JSONObject obj = new JSONObject(json);
             int particleNums = obj.getInt("number_particles");
@@ -71,14 +137,17 @@ public class Driver {
 
             ParticleSwarmOptimization PSO = new ParticleSwarmOptimization(particleNums, minVelocity,maxVelocity, c1,
                     c2, inertia, config, max_iterations);
-            PSO.execute();
+            SolutionInstance instance = PSO.execute(generateReport);
+            return instance;
 
         }catch(IOException e){
             e.printStackTrace();
         }
+        System.out.println("PSO - Error in Returning a final Solution Instance");
+        return null;
     }
 
-    private static void runSA(String name) {
+    private static SolutionInstance runSA(String name, boolean generateReport) {
         try{
             // find file name and run
             FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
@@ -87,7 +156,7 @@ public class Driver {
 
             // JSON is all on 1 line
             String json = br.readLine();
-            System.out.println(json);
+            //System.out.println(json);
 
             JSONObject obj = new JSONObject(json);
             double temperature = Double.parseDouble(obj.getString("initial_temperature"));
@@ -95,15 +164,18 @@ public class Driver {
             String config = obj.getString("configuration");
 
             SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(temperature, coolRate, config);
-            simulatedAnnealing.execute();
 
+            SolutionInstance instance = simulatedAnnealing.execute(generateReport);
+            return instance;
 
         }catch(IOException e){
             e.printStackTrace();
         }
+        System.out.println("SA - Error in Returning a final Solution Instance");
+        return null;
     }
 
-    private static void runGA(String name) {
+    private static SolutionInstance runGA(String name, boolean generateReport) {
         try{
             // find file name and run
             FileReader file = new FileReader("C:/Users/Shawn Cole/Documents/UCT '20/Evolutionary " +
@@ -112,7 +184,7 @@ public class Driver {
 
             // JSON is all on 1 line
             String json = br.readLine();
-            System.out.println(json);
+            //System.out.println(json);
 
             JSONObject obj = new JSONObject(json);
             String selection_method = obj.getString("selection_method");
@@ -124,11 +196,14 @@ public class Driver {
 
             GeneticAlgorithm GA = new GeneticAlgorithm(selection_method, mutation_ratio, crossover_ratio,
                     crossover_method, mutation_method, config, max_iterations);
-            GA.execute();
+            SolutionInstance instance = GA.execute(generateReport);
 
+            return instance;
         }catch(IOException e){
             e.printStackTrace();
         }
+        System.out.println("GA - Error in Returning a final Solution Instance");
+        return null;
     }
 
     private static void PopulateItems(int size) {
@@ -154,56 +229,5 @@ public class Driver {
             e.printStackTrace();
         }
     }
-    private static void generateReport(boolean writeToFile, String fileName) throws IOException {
-        String withTime, withoutTime;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        withTime = sdf.format(new Date());
-        sdf = new SimpleDateFormat("yyyy-MM-dd");
-        withoutTime = sdf.format(new Date());
-
-        if (writeToFile == false){
-            System.out.println("Evaluation  |  " + withTime);
-            System.out.println("Configuration:  " + fileName+".json");
-            System.out.println(); // Print specific specs
-            System.out.println("==============================================");
-        }else{
-            String fName = "report_" +  fileName +"_"+ withoutTime;
-            File file = new File(fName+ ".txt");
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write("Evaluation  |  " + withTime + "\n");
-            bw.write("Configuration:  " + fileName+".json"+ "\n");
-
-            String algorithm_info = "GA | #10000 | RWS | 2PX (0.7) | EXM (0.003)";
-            bw.write("                " + algorithm_info+ "\n");
-            bw.write("===================================================================================="+ "\n");
-            bw.write(String.format("%-8s %-8s %-8s %-8s %s", "#", "bweight", "bvalue", "squality", "knapsack")+ "\n");
-            bw.write("------------------------------------------------------------------------------------"+ "\n");
-            //for loop
-            bw.write("*** For Loop Stuff ***"+ "\n");
-            bw.write("------------------------------------------------------------------------------------"+ "\n");
-            bw.write("[Statistics]"+ "\n");
-            int runtime = 12322;
-            bw.write("Runtime" + String.format("%15d", runtime)+ "\n");
-            bw.newLine();
-
-            bw.write(String.format("%-20s %-8s %-8s %-8s %-8s", "Convergence", "#", "bweight", "bvalue", "squality") + "\n");
-            //
-            bw.newLine();
-            bw.newLine();
-
-            float platAverage = 3;
-            int startPlat = 443;
-            int endPlat = 472;
-            bw.write("Plateau  |  Longest sequence " +  String.valueOf(startPlat) +"-"+ String.valueOf(endPlat) +
-                    " with improvement less average "  + String.valueOf(platAverage) + "%."+ "\n");
-
-            bw.close();
-        } // end else
-
-    } // generateReport
 }

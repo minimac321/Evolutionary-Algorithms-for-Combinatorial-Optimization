@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,10 +16,13 @@ public class GeneticAlgorithm {
     public String crossover_method;
     public String mutation_method;
     public String config;
+    public String reportString;
     public int maxIterations;
 
     // What is this used for ??
     private double elitismRatio;
+
+    public SolutionInstance[] report_array = new SolutionInstance[Driver.max_iterations];
 
     public GeneticAlgorithm(String selectionMethod, double mutation_ratio, double crossover_ratio,
                             String crossover_method, String mutation_method, String config, int max_iterations){
@@ -30,6 +34,10 @@ public class GeneticAlgorithm {
 
         this.config = config;
         this.maxIterations = max_iterations;
+
+        this.reportString =
+                "GA  |  #10000  |  " + selectionMethod + "  |  " + crossover_method + " (" + String.valueOf(crossover_ratio)+
+                        ")   |  " + mutation_method +  " (" + String.valueOf(mutation_ratio) + ")";
 
         population = new Chromosome[Driver.num_of_items];
     }
@@ -43,7 +51,7 @@ public class GeneticAlgorithm {
         }
     }
 
-    public void execute(){
+    public SolutionInstance execute(boolean generateReport) throws IOException {
         //System.out.println(config);
         RandomInitialization();
 
@@ -52,48 +60,58 @@ public class GeneticAlgorithm {
 
         Chromosome bestChromosome = population[0];
         currentBestFitness = bestChromosome.getFitness();
-        System.out.printf("Best Fitness : %d\n", bestChromosome.getFitness());
-        System.out.printf("Worst Fitness: %d\n", population[149].getFitness());
+        //System.out.printf("Best Fitness : %d\n", bestChromosome.getFitness());
+        //System.out.printf("Worst Fitness: %d\n", population[149].getFitness());
 
         long runtimeStart = System.currentTimeMillis();
         int i = 0;
 
-        while ( (i < Driver.max_iterations) ) {
-
-            if ( (i%500) == 0 ) System.out.printf("Generation: %d, Best = %d\n", i, bestChromosome.getFitness());
+        while ( i < Driver.max_iterations ) {
+            try {
+                report_array[i] = bestChromosome.gene.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            //if ( (i%500) == 0 ) System.out.printf("Generation: %d, Best = %d\n", i, bestChromosome.getFitness());
             evolve();
             Arrays.sort(population); // sorts descending
             bestChromosome = population[0];
             if (bestChromosome.getFitness() > currentBestFitness) {
                 currentBestFitness = bestChromosome.getFitness();
-                System.out.printf("generation %d, Fitness - %d, Weight - %d\n", i, bestChromosome.getFitness(),
-                        bestChromosome.getWeight());
+//                System.out.printf("generation %d, Fitness - %d, Weight - %d\n", i, bestChromosome.getFitness(), bestChromosome.getWeight());
             }
             i++;
         }
 
-        System.out.println("generation                  : " + String.valueOf(i));
+        long totalTime = System.currentTimeMillis() - runtimeStart;
+
+        //System.out.println("generation                  : " + String.valueOf(i));
         System.out.println("best fitness                : " + String.valueOf(bestChromosome.getFitness()) );
-        System.out.println("best weight                : " + String.valueOf(bestChromosome.getWeight()) );
-        System.out.println("runtime                     : " + (System.currentTimeMillis() - runtimeStart) + " ms");
+        //System.out.println("best weight                : " + String.valueOf(bestChromosome.getWeight()) );
+        System.out.println("runtime                     : " + totalTime + " ms");
         System.out.println("numberOfCrossoverOperations : " + numberOfCrossoverOperations);
         System.out.println("numberOfMutationOperations  : " + numberOfMutationOperations);
+//        System.out.println(bestChromosome.gene.toString());
+//        int itotal = 0;
+//        ArrayList<Integer> arrV = new ArrayList<Integer>();
+//        ArrayList<Integer> arrW = new ArrayList<Integer>();
 
-        System.out.println(bestChromosome.gene.toString());
-        int itotal = 0;
-        ArrayList<Integer> arrV = new ArrayList<Integer>();
-        ArrayList<Integer> arrW = new ArrayList<Integer>();
+//        for (int j = 0; j < 150; j++) {
+//            if (bestChromosome.gene.Solution[j] == true){
+//                itotal = itotal + bestChromosome.gene.Items[j].getValue();
+//                arrV.add( bestChromosome.gene.Items[j].getValue() ) ;
+//                arrW.add( bestChromosome.gene.Items[j].getWeight() ) ;
+//            }
+//        }
+        //System.out.println("Values: " + arrV);
+        //System.out.println("Weights: " + arrW );
 
-        for (int j = 0; j < 150; j++) {
-            if (bestChromosome.gene.Solution[j] == true){
-                itotal = itotal + bestChromosome.gene.Items[j].getValue();
-                arrV.add( bestChromosome.gene.Items[j].getValue() ) ;
-                arrW.add( bestChromosome.gene.Items[j].getWeight() ) ;
-            }
-        }
-        System.out.println("Values: " + arrV);
-        System.out.println("Weights: " + arrW );
+        if (report_array.length != 10000) System.out.println("Waaaaahhh");
+        new Report(generateReport, config, reportString, report_array, totalTime);
+
+        return bestChromosome.gene;
     }
+
 
     // *******Make evolve tooHeavy safe and has no chromosomes that are too heavy***********
     public void evolve() {
