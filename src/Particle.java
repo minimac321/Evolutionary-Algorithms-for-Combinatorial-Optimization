@@ -1,8 +1,6 @@
-import javafx.geometry.Pos;
-
 import java.util.Arrays;
 
-public class Particle {
+public class Particle implements Cloneable{
     public String Position;
     public double[] Velocity;
 
@@ -37,6 +35,10 @@ public class Particle {
         // Size is solution.numItems
         Position = solution.stringSolution();
     }
+    @Override
+    protected Particle clone() throws CloneNotSupportedException {
+        return (Particle) super.clone();
+    }
 
     private void generatePosValues() {
         boolean[] pos = new boolean[150];
@@ -52,6 +54,14 @@ public class Particle {
         //System.out.println(String.valueOf(currentInstance.calculateFitness()) + " - " + String.valueOf
         // (currentInstance.calculateWeight()));
 
+    }
+
+    public void setCurrentInstance(SolutionInstance s){
+        try {
+            this.currentInstance = s.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updatePbestSolution() {
@@ -75,12 +85,17 @@ public class Particle {
 
     private void generateRandomVel() {
 
-//        for(int v = 0; v < Velocity.length; v++) {
-//            // create number between 0-1 and * VMAX
-//            double vel = ParticleSwarmOptimization.randomGenerator.nextDouble() * maxVelocity;
-//            Velocity[v] = checkBoundaries(vel);
-//        }
-        Arrays.fill(Velocity, minVelocity);
+        for(int v = 0; v < Velocity.length; v++) {
+            // create number between 0-1 and * VMAX
+            double vel = ParticleSwarmOptimization.randomGenerator.nextDouble() * maxVelocity;
+
+            if (!ParticleSwarmOptimization.randomGenerator.nextBoolean()) {
+                Velocity[v] = vel * -1;
+            }else{
+                Velocity[v] = vel;
+            }
+        }
+        //Arrays.fill(Velocity, minVelocity);
     }
 
     private double checkBoundaries(double v) {
@@ -96,9 +111,7 @@ public class Particle {
             this.gBestInstance.calculateFitness();
             this.gBestInstance.calculateWeight();
         } catch (CloneNotSupportedException e) {
-            System.out.println("Error in clone somewhere");
             e.printStackTrace();
-            System.exit(0);
         }
     }
 
@@ -116,7 +129,7 @@ public class Particle {
     }
 
     public int getWeight(){
-        return currentInstance.totalWeight;
+        return currentInstance.weight;
     }
 
     public void getNewPositions(){
@@ -128,9 +141,9 @@ public class Particle {
             r1 = ParticleSwarmOptimization.randomGenerator.nextDouble();
             r2 = ParticleSwarmOptimization.randomGenerator.nextDouble();
 
-            current = (int) (currentInstance.stringSolution().charAt(i));
-            pBest = (int) (pBestInstance.stringSolution().charAt(i));
-            gBest = (int) (gBestInstance.stringSolution().charAt(i));
+            current = Character.getNumericValue(currentInstance.stringSolution().charAt(i));
+            pBest = Character.getNumericValue(pBestInstance.stringSolution().charAt(i));
+            gBest = Character.getNumericValue(gBestInstance.stringSolution().charAt(i));
 
             Velocity[i] = Velocity[i] * inertia + c1 * r1 * (pBest - current) + c2 * r2 * (gBest - current);
         }
@@ -138,12 +151,12 @@ public class Particle {
             //System.out.println("Velocities: " + Arrays.toString(Arrays.copyOf(Velocity, 5)));
 
         pos = new boolean[150];
-        threshold = 0.25;
+        threshold = 0.2;
 
         // ISSUE HERE // - find correct algorithm for when to choose
-        for(int v = 0; v < pos.length; v++) {
+        for(int v = 0; v < Velocity.length; v++) {
             // sigmoid(Velocity[v])
-            if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold){
+            if (ParticleSwarmOptimization.randomGenerator.nextDouble() < sigmoid(Velocity[v])){
                 pos[v] = true;
             }
             else{
@@ -170,7 +183,6 @@ public class Particle {
 
         //trace
         //System.out.printf("Retry occurred %d times\n", iRetry);
-
     }
 
 }

@@ -7,7 +7,7 @@ public class SolutionInstance implements Cloneable {
     public int capacity;
     public boolean[] Solution;
 
-    public int totalWeight;
+    public int weight;
     public int fitness;
 
     public SolutionInstance(){
@@ -22,7 +22,7 @@ public class SolutionInstance implements Cloneable {
 
         Arrays.fill(Solution, false);
 
-        totalWeight = calculateWeight();
+        weight = calculateWeight();
         fitness = calculateFitness();
     }
 
@@ -35,7 +35,7 @@ public class SolutionInstance implements Cloneable {
 
         Solution = b;
 
-        totalWeight = calculateWeight();
+        weight = calculateWeight();
         fitness = calculateFitness();
     }
 
@@ -49,7 +49,7 @@ public class SolutionInstance implements Cloneable {
     }
 
     public void setPosition(boolean[] pos){
-        this.Solution = pos.clone();
+        Solution = pos.clone();
         calculateFitness();
         calculateWeight();
     }
@@ -70,31 +70,26 @@ public class SolutionInstance implements Cloneable {
     }
 
     public boolean isTooHeavy(){
-        return (totalWeight > capacity);
+        return (weight > capacity);
     }
 
     public int calculateWeight() {
-        int weight = 0;
-
+        int w = 0;
         for (int i = 0; i < Driver.num_of_items; i++) {
-            if (Solution[i] == true) {
-                weight += Items[i].getWeight();
-            }
+            if (Solution[i]) w += Items[i].getWeight();
         }
-        totalWeight = weight;
+        weight = w;
         return weight;
     }
 
     public int calculateFitness() {
         int profit = 0;
-
         for (int i = 0; i < Driver.num_of_items; i++) {
             if (Solution[i]) profit += Items[i].getValue();
         }
         fitness = profit;
-        return profit;
+        return fitness;
     }
-
 
     @Override
     public String toString() {

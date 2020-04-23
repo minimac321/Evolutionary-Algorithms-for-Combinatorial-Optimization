@@ -18,11 +18,12 @@ public class ParticleSwarmOptimization {
 
     public static MersenneTwister randomGenerator = new MersenneTwister();
 
-    public SolutionInstance[] report_array = new SolutionInstance[Driver.max_iterations];
+    public ArrayList<SolutionInstance> report_array;
 
 
     public ParticleSwarmOptimization(int particleNums, int minVelocity, int maxVelocity, double c1, double c2,
                                      double inertia, String config, int max_iterations) {
+        report_array = new ArrayList<>();
         this.particleNums = particleNums;
         this.minVelocity = minVelocity;
         this.maxVelocity = maxVelocity;
@@ -41,19 +42,21 @@ public class ParticleSwarmOptimization {
 
     // Best answer so far is 812
     public SolutionInstance execute(boolean generateReport) throws IOException {
+        int mostRecentGBest = 0;
         boolean bChange;
         ArrayList<Integer> gBestArray= new ArrayList<Integer>();
 
         ZeroInitialize(); // Initialize with zero fitness (no items in knapsack)
+        // Maybe random initialization ??
 
         // Must also make first addition in all arrays
         int iMax = Integer.MIN_VALUE;
         long runtimeStart = System.currentTimeMillis();
 
 
-        for (int iter = 0; iter < 2000; iter++){
+        for (int iter = 0; iter < Driver.max_iterations; iter++){
 
-            //System.out.printf("***************** Iteration %d *****************\n", iter);
+            System.out.printf("***************** Iteration %d *****************\n", iter);
 
             // for each particle:
             for (int a = 0; a < particleNums; a++ ) {
@@ -68,22 +71,23 @@ public class ParticleSwarmOptimization {
 
             // Update gBest for all particles
             for (int p = 0; p < particleNums; p++ ) {
-                if ( (Swarm[p].getFitness() > iMax) && !(Swarm[p].currentInstance.isTooHeavy())){
+                if ( (Swarm[p].getFitness() > iMax) && (!Swarm[p].currentInstance.isTooHeavy())){
                     try{
                         bChange = true;
                         tmp = Swarm[p].currentInstance.clone();
-                        //System.out.printf("New global Maximum. Previous = %d, New = %d\n", iMax, tmp.fitness);
+                        System.out.printf("New global Maximum. Previous = %d, New = %d\n", iMax, tmp.fitness);
                         iMax = tmp.fitness;
                     } catch (CloneNotSupportedException e) {
-                        System.out.println("Error in clone somewhere");
                         e.printStackTrace();
-                        System.exit(0);
                     }
                 }
             }
 
             // Update best Global Position
-            if (bChange) updateGbest(tmp);
+            if (bChange) {
+                mostRecentGBest = iter;
+                updateGbest(tmp);
+            }
 
             // Update positions
             for (int j = 0; j < particleNums; j++ ) {
@@ -92,10 +96,16 @@ public class ParticleSwarmOptimization {
                 Swarm[j].getNewPositions();
                 //System.out.printf("New  Pos: %s\n", Swarm[p].currentInstance.toString());
             }
+            // If stagnanent for 500 iterations, reshuffle all particles
+            if (iter - mostRecentGBest > 500){
+                reshuffled();
+                System.out.println("============= Reshuffled =============");
+                mostRecentGBest = iter;
+            }
 
             gBestArray.add(Swarm[0].gBestInstance.fitness);
             try {
-                report_array[iter] = Swarm[0].gBestInstance.clone();
+                 report_array.add(Swarm[0].gBestInstance.clone());
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
@@ -109,16 +119,45 @@ public class ParticleSwarmOptimization {
         // .fitness);
         //System.out.println(gBestArray);
 
-        new Report(generateReport, config, reportString, report_array, totalTime);
+        SolutionInstance[] list_reportArray = report_array.toArray(new SolutionInstance[report_array.size()]);
+
+        new Report(generateReport, config, reportString, list_reportArray, totalTime);
 
         return bestSolution;
     }
 
+    public void reshuffled() {
+        for (int i = 0; i < particleNums; i++) {
+            Swarm[i] = generateRandomInstance(Swarm[i]);
+        }
+
+    }
+    public Particle generateRandomInstance(Particle particle) {
+        try {
+            Particle p = particle.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        SolutionInstance s = particle.currentInstance;
+
+        do{
+            boolean[] pos = new boolean[Driver.num_of_items];
+            Arrays.fill(pos, false);
+
+            for(int c = 0; c < Driver.num_of_items; c++) {
+                if (SimulatedAnnealing.randomGenerator.nextDouble() < 0.3) pos[c] = true;
+                else pos[c] = false;
+            }
+            s.setPosition(pos);
+        } while (s.isTooHeavy());
+
+        particle.setCurrentInstance(s);
+        return particle;
+    }
+
     public void ZeroInitialize() {
         for (int i = 0; i < particleNums; i++) {
-            Particle particle = new Particle(minVelocity, maxVelocity,c1, c2, inertia,
-                    new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity));
-            Swarm[i] = particle;
+            Swarm[i] = new Particle(minVelocity, maxVelocity,c1, c2, inertia, new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity));;
         }
     }
 

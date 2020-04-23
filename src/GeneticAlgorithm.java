@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GeneticAlgorithm {
@@ -46,14 +45,13 @@ public class GeneticAlgorithm {
         for (int i = 0; i < population.length; i++) {
             Chromosome chromosome = new Chromosome(new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity));
             population[i] = chromosome;
-            population[i].generateRandom();
-            population[i].updateMetrics();
+            population[i].generateRandom(0.29); // Make zero for Zero Initializer
         }
     }
 
     public SolutionInstance execute(boolean generateReport) throws IOException {
-        //System.out.println(config);
-        RandomInitialization();
+        RandomInitialization(); // Is protected for TooHeavy
+        // Maybe Zero initialization?? - // in and out and compare results
 
         // Sort DESCENDING array according to fitness => comparable already added
         Arrays.sort(population);
@@ -64,24 +62,31 @@ public class GeneticAlgorithm {
         //System.out.printf("Worst Fitness: %d\n", population[149].getFitness());
 
         long runtimeStart = System.currentTimeMillis();
-        int i = 0;
+        int iter = 0;
 
-        while ( i < Driver.max_iterations ) {
+        while ( iter < Driver.max_iterations ) {
             try {
-                report_array[i] = bestChromosome.gene.clone();
+                report_array[iter] = bestChromosome.gene.clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-            //if ( (i%500) == 0 ) System.out.printf("Generation: %d, Best = %d\n", i, bestChromosome.getFitness());
-            evolve();
+            //if ( (i%500) == 0 ) System.out.printf("Generation: %d, Best = %d\n", iter, bestChromosome.getFitness());
+            population = evolve();
             Arrays.sort(population); // sorts descending
-            bestChromosome = population[0];
-            if (bestChromosome.getFitness() > currentBestFitness) {
-                currentBestFitness = bestChromosome.getFitness();
-//                System.out.printf("generation %d, Fitness - %d, Weight - %d\n", i, bestChromosome.getFitness(), bestChromosome.getWeight());
+            try {
+                bestChromosome = population[0].clone();
+                bestChromosome.updateMetrics();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+                System.exit(0);
             }
-            i++;
-        }
+            if (bestChromosome.getFitness() > currentBestFitness && bestChromosome.getWeight() <= Driver.max_capacity) {
+                currentBestFitness = bestChromosome.getFitness();
+//                System.out.printf("generation %d, Fitness - %d, Weight - %d\n", iter, bestChromosome.getFitness(), bestChromosome.getWeight());
+            }
+            iter++;
+
+        }// End While loop
 
         long totalTime = System.currentTimeMillis() - runtimeStart;
 
@@ -106,7 +111,6 @@ public class GeneticAlgorithm {
         //System.out.println("Values: " + arrV);
         //System.out.println("Weights: " + arrW );
 
-        if (report_array.length != 10000) System.out.println("Waaaaahhh");
         new Report(generateReport, config, reportString, report_array, totalTime);
 
         return bestChromosome.gene;
@@ -114,14 +118,21 @@ public class GeneticAlgorithm {
 
 
     // *******Make evolve tooHeavy safe and has no chromosomes that are too heavy***********
-    public void evolve() {
+    public Chromosome[] evolve() {
         Chromosome[] new_Population = new Chromosome[population.length];
-        // keeping top 10% and possibly evolving bottom 90%
-        double index_percentage = 0.1;
-        int index = (int) Math.round(index_percentage * population.length);
-//        System.out.println(population.length);
-        // Copy top 10% from population into new_population
-        System.arraycopy(population, 0, new_Population, 0, index);
+        // keeping top 20% and possibly evolving bottom 90%
+        int index = 30;
+        //System.out.println(population.length);
+        // Copy top 20% from population into new_population
+        int a = 0;
+        while (a < index){
+            try {
+                new_Population[a] = population[a].clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            a++;
+        }
 
         // Fill the rest of new_population with selection, crossover&mutation.
         while (index < population.length){
@@ -150,19 +161,16 @@ public class GeneticAlgorithm {
                     children[0] = rollBack(OnePointX.cross(parentArray, cross_point, 0));
                     children[1] = rollBack(OnePointX.cross(parentArray, cross_point, 1));
 
-                } else {
+                } else if (crossover_method.equals("2PX")){
                     //System.out.println("here 6");
-                    int cross_point1 = randomGenerator.nextInt(1, 148);
-                    int cross_point2 = randomGenerator.nextInt(1, 148);
-                    if (cross_point1 < cross_point2){
-                        children[0] = rollBack(TwoPointX.cross(parentArray, cross_point1, cross_point2, 0));
-                        children[1] = rollBack(TwoPointX.cross(parentArray, cross_point1, cross_point2, 1));
-                    }
-                    else {
-                        children[0] = rollBack(TwoPointX.cross(parentArray, cross_point2, cross_point1, 0));
-                        children[1] = rollBack(TwoPointX.cross(parentArray, cross_point2, cross_point1, 1));
-                    }
-
+                    int cross_point1 = randomGenerator.nextInt(1, 147);
+                    int cross_point2 = randomGenerator.nextInt(cross_point1+1, 148);
+                    children[0] = rollBack(TwoPointX.cross(parentArray, cross_point1, cross_point2, 0));
+                    children[1] = rollBack(TwoPointX.cross(parentArray, cross_point1, cross_point2, 1));
+                }
+                else{
+                    System.out.println("Input Error for GA");
+                    System.exit(0);
                 }
 
 
@@ -257,22 +265,21 @@ public class GeneticAlgorithm {
         } // end while loop
         //System.out.println("here 13");
 
-        // Clone or no clone??
-        population = new_Population.clone();
-
+        return new_Population.clone();
     }
 
     public static Chromosome rollBack(Chromosome new_chromosome) {
         //return new_chromosome;
-        if (new_chromosome.getWeight() <= 822) return new_chromosome;
+        new_chromosome.updateMetrics();
+        if (new_chromosome.getWeight()<= 822) return new_chromosome;
+
         Chromosome rolledChromosome = new Chromosome(new SolutionInstance(Driver.Items, Driver.num_of_items,
                 Driver.max_capacity, new_chromosome.gene.Solution));
         int count = 0;
-
         do{
             int rand = GeneticAlgorithm.randomGenerator.nextInt(0, 149);
             if (rolledChromosome.gene.getBit(rand) ){
-                rolledChromosome.gene.Solution[rand] = flip(rolledChromosome.gene.getBit(rand));
+                rolledChromosome.gene.Solution[rand] = false;
             }
             count++;
             rolledChromosome.updateMetrics();
@@ -280,12 +287,6 @@ public class GeneticAlgorithm {
 
         //System.out.printf("Rolled Back: %d times\n", count);
         return rolledChromosome;
-
-    }
-
-    public static boolean flip(boolean b){
-        if (b) return false;
-        else return true;
     }
 
 }

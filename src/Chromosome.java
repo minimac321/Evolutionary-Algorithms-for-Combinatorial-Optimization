@@ -1,30 +1,38 @@
 import java.util.Arrays;
 
-public class Chromosome implements Comparable<Chromosome> {
+public class Chromosome implements Comparable<Chromosome>, Cloneable {
     public SolutionInstance gene;
     public String Position;
     private int fitness;
     private int weight;
 
     public Chromosome(SolutionInstance gene) {
-        this.gene = gene;
+        try {
+            this.gene = gene.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         Position = gene.stringSolution();
         fitness = gene.calculateFitness();
         weight = gene.calculateWeight();
     }
 
-    public void generateRandom() {
+    @Override
+    protected Chromosome clone() throws CloneNotSupportedException {
+        return (Chromosome) super.clone();
+    }
+
+    public void generateRandom(double threshold) {
         do{
             boolean[] pos = new boolean[Driver.num_of_items];
             Arrays.fill(pos, false);
 
             for(int c = 0; c < Driver.num_of_items; c++) {
-                if (GeneticAlgorithm.randomGenerator.nextDouble() < 0.29) pos[c] = true;
+                if (GeneticAlgorithm.randomGenerator.nextDouble() < threshold) pos[c] = true;
                 else pos[c] = false;
             }
             this.gene.setPosition(pos);
-            this.gene.calculateWeight();
-        } while (gene.isTooHeavy());
+        } while (this.gene.isTooHeavy());
 
     }
 
@@ -42,7 +50,7 @@ public class Chromosome implements Comparable<Chromosome> {
     }
 
     public int getWeight() {
-        return gene.totalWeight;
+        return gene.weight;
     }
 
     public int compareTo(Chromosome chromosome) {

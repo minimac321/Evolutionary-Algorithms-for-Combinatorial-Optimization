@@ -1,5 +1,3 @@
-import org.json.JSONObject;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -25,7 +23,14 @@ public class Report {
 
         }else{
             String fName = "report_" +  fileName +"_"+ withoutTime;
-            File file = new File(fName+ ".txt");
+            String algorithmName ="";
+            if (fileName.contains("ga")) algorithmName = "ga";
+
+            else if (fileName.contains("pso")) algorithmName = "pso";
+            else if (fileName.contains("sa")) algorithmName = "sa";
+            else System.out.println("WAAAAAAAHH in Report");
+
+            File file = new File("Default_Output/"+ algorithmName + "/" + fName+ ".txt");
 
             if (!file.exists()) {
                 file.createNewFile();
@@ -42,7 +47,7 @@ public class Report {
             for (int i = 0; i < bestSolutions.length; i++) {
                 SolutionInstance s = bestSolutions[i];
                 double sq = s.fitness*1.0 / Driver.best_optimum;
-                bw.write(String.format("%-8d %-8d %-8d %-8fs %s\n", (i+1), s.totalWeight, s.fitness, sq,
+                bw.write(String.format("%-8d %-8d %-8d %-8fs %s\n", (i+1), s.weight, s.fitness, sq,
                         s.toString()));
 
             }
@@ -52,27 +57,44 @@ public class Report {
             bw.write("Runtime" + String.format("%15f", runtime)+ "\n");
             bw.newLine();
 
-            bw.write(String.format("%-20s %-8s %-8s %-8s %-8s", "", "#", "bweight", "bvalue", "squality") + "\n");
-            // 4 lines
-            SolutionInstance s = bestSolutions[2499];
-            double sq = s.fitness*1.0 / Driver.best_optimum;
-            bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 2500, s.totalWeight, s.fitness, sq,
-                    s.toString()));
-            s = bestSolutions[4999];
-            sq = s.fitness*1.0 / Driver.best_optimum;
-            bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 5000, s.totalWeight, s.fitness, sq,
-                    s.toString()));
-            s = bestSolutions[7499];
-            sq = s.fitness*1.0 / Driver.best_optimum;
-            bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 7500, s.totalWeight, s.fitness, sq,
-                    s.toString()));
-            s = bestSolutions[9999];
-            sq = s.fitness*1.0 / Driver.best_optimum;
-            bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 10000, s.totalWeight, s.fitness, sq) );
+            if (bestSolutions.length == 10000){
+                bw.write(String.format("%-20s %-8s %-8s %-8s %-8s", "", "#", "bweight",
+                        "bvalue",
+                        "squality") +
+                        "\n");
 
-            //
-            bw.newLine();
-            bw.newLine();
+                // 4 lines
+                SolutionInstance s = bestSolutions[2499];
+                double sq = s.fitness*1.0 / Driver.best_optimum;
+                bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 2500, s.weight, s.fitness, sq,
+                        s.toString()));
+                s = bestSolutions[4999];
+                sq = s.fitness*1.0 / Driver.best_optimum;
+                bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 5000, s.weight, s.fitness, sq,
+                        s.toString()));
+                s = bestSolutions[7499];
+                sq = s.fitness*1.0 / Driver.best_optimum;
+                bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 7500, s.weight, s.fitness, sq,
+                        s.toString()));
+                s = bestSolutions[9999];
+                sq = s.fitness*1.0 / Driver.best_optimum;
+                bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", 10000, s.weight, s.fitness, sq) );
+
+                //
+                bw.newLine();
+                bw.newLine();
+            }else{
+                bw.write(String.format("%-20s %-8s %-8s %-8s %-8s", "", "#", "bweight",
+                        "bvalue",
+                        "squality") +
+                        "\n");
+                int half = (int)(bestSolutions.length/2);
+                SolutionInstance s = bestSolutions[half];
+                double sq = s.fitness*1.0 / Driver.best_optimum;
+                bw.write(String.format("%-20s %-8d %-8d %-8d %-8f\n", "", half, s.weight, s.fitness, sq,
+                        s.toString()));
+
+            }
 
             int startPlat = 0;
             int endPlat = 0;

@@ -19,8 +19,7 @@ public class Driver {
         SolutionInstance result = null;
 
         PopulateItems(150);
-        //System.out.println(Items[0].toString());
-        //System.out.println(Items[149].toString());
+
 
         if (args[0].equals("-configuration")){
 
@@ -58,15 +57,15 @@ public class Driver {
                 System.out.printf("Loading and running: %s now\n", name);
 
                 if (algorithm_name.equals("ga")){
-                    result = runGA(name, false);
+                    result = runGA(name, true);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("sa")){
-                    result = runSA(name, false);
+                    result = runSA(name, true);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("pso")){
-                    result = runPSO(name, false);
+                    result = runPSO(name, true);
                     bestResults.add(result);
                 }
             }
@@ -89,6 +88,11 @@ public class Driver {
 
             makeBestJSONFile(algorithm_name, num);
         }
+        else{
+            System.out.println("Invalid Input");
+            System.exit(0);
+
+        }
 
     }
 
@@ -101,7 +105,7 @@ public class Driver {
             String json = br.readLine();
             obj = new JSONObject(json);
 
-            FileWriter f = new FileWriter(algorithm_name + "_best.json");
+            FileWriter f = new FileWriter("Best_Output/"+ algorithm_name + "_best.json");
 
             f.write(obj.toString());
             f.close();
