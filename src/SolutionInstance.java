@@ -26,7 +26,6 @@ public class SolutionInstance implements Cloneable {
         fitness = calculateFitness();
     }
 
-
     public SolutionInstance(item[] Items, int numItems, int capacity, boolean[] b){
         this.Items = Items;
         this.numItems = numItems;
@@ -39,7 +38,6 @@ public class SolutionInstance implements Cloneable {
         fitness = calculateFitness();
     }
 
-
     public boolean getBit(int iPos){
         return Solution[iPos];
     }
@@ -50,8 +48,8 @@ public class SolutionInstance implements Cloneable {
 
     public void setPosition(boolean[] pos){
         Solution = pos.clone();
-        calculateFitness();
         calculateWeight();
+        calculateFitness();
     }
 
     public String stringSolution(){
@@ -87,10 +85,13 @@ public class SolutionInstance implements Cloneable {
         for (int i = 0; i < Driver.num_of_items; i++) {
             if (Solution[i]) profit += Items[i].getValue();
         }
+        if (calculateWeight() > capacity){
+            fitness = 0;
+            return 0;
+        }
         fitness = profit;
         return fitness;
     }
-
     @Override
     public String toString() {
         String sKnapsack = "";

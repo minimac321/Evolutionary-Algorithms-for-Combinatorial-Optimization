@@ -91,7 +91,6 @@ public class Driver {
         else{
             System.out.println("Invalid Input");
             System.exit(0);
-
         }
 
     }
@@ -201,8 +200,8 @@ public class Driver {
             GeneticAlgorithm GA = new GeneticAlgorithm(selection_method, mutation_ratio, crossover_ratio,
                     crossover_method, mutation_method, config, max_iterations);
             SolutionInstance instance = GA.execute(generateReport);
-
             return instance;
+
         }catch(IOException e){
             e.printStackTrace();
         }

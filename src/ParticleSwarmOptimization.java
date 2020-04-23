@@ -46,11 +46,10 @@ public class ParticleSwarmOptimization {
         boolean bChange;
         ArrayList<Integer> gBestArray= new ArrayList<Integer>();
 
-        ZeroInitialize(); // Initialize with zero fitness (no items in knapsack)
-        // Maybe random initialization ??
+        RandomInitialize(0.2);
 
         // Must also make first addition in all arrays
-        int iMax = Integer.MIN_VALUE;
+        int iMax = 0;
         long runtimeStart = System.currentTimeMillis();
 
 
@@ -71,7 +70,7 @@ public class ParticleSwarmOptimization {
 
             // Update gBest for all particles
             for (int p = 0; p < particleNums; p++ ) {
-                if ( (Swarm[p].getFitness() > iMax) && (!Swarm[p].currentInstance.isTooHeavy())){
+                if ( (Swarm[p].getFitness() > iMax) && (Swarm[p].currentInstance.fitness != 0)){
                     try{
                         bChange = true;
                         tmp = Swarm[p].currentInstance.clone();
@@ -120,7 +119,6 @@ public class ParticleSwarmOptimization {
         //System.out.println(gBestArray);
 
         SolutionInstance[] list_reportArray = report_array.toArray(new SolutionInstance[report_array.size()]);
-
         new Report(generateReport, config, reportString, list_reportArray, totalTime);
 
         return bestSolution;
@@ -155,9 +153,17 @@ public class ParticleSwarmOptimization {
         return particle;
     }
 
-    public void ZeroInitialize() {
+    public void RandomInitialize(double threshold){
         for (int i = 0; i < particleNums; i++) {
-            Swarm[i] = new Particle(minVelocity, maxVelocity,c1, c2, inertia, new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity));;
+            boolean[] pos = new boolean[Driver.num_of_items];
+            Arrays.fill(pos, false);
+
+            for(int c = 0; c < Driver.num_of_items; c++) {
+                if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold) pos[c] = true;
+                else pos[c] = false;
+            }
+            SolutionInstance s = new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity, pos);
+            Swarm[i] = new Particle(minVelocity, maxVelocity,c1, c2, inertia, s);
         }
     }
 

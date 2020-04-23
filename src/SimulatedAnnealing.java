@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SimulatedAnnealing{
-
     public SolutionInstance currentInstance;
     public SolutionInstance bestInstance;
     public double maxTemp;
@@ -11,7 +10,7 @@ public class SimulatedAnnealing{
     public String config;
     public String reportString;
 
-    public final double minTemp = 0.01;
+    public final double minTemp = 1;
 
     // Random Number Generator
     public static MersenneTwister randomGenerator = new MersenneTwister();
@@ -32,7 +31,7 @@ public class SimulatedAnnealing{
         double temperature = maxTemp;
 
         // Make a random Starting instance *************
-        currentInstance = generateRandomInstance();
+        currentInstance = generateRandomInstance(0.45);
 
         try {
             bestInstance = currentInstance.clone();
@@ -40,17 +39,12 @@ public class SimulatedAnnealing{
             e.printStackTrace();
         }
 
-//        int startPlatF = Integer.MIN_VALUE;
-//        int endPlatF = Integer.MIN_VALUE;
-//        int plat_lengthF = 0;
-
         int iCounter = 0;
         long runtimeStart = System.currentTimeMillis();
 
         //System.out.println("Start S.A.");
         while (temperature > minTemp) {
-            //System.out.printf("Current Temp %5.2f\n", temperature);
-
+            System.out.printf("Current Temp %5.2f\n", temperature);
             SolutionInstance neighbour = getNeighbourInstance(currentInstance);
             //System.out.printf("Random Instance weight - %d, fitness - %d\n", neighbour.Weight, neighbour.fitness);
 
@@ -83,7 +77,6 @@ public class SimulatedAnnealing{
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
-
             }
 
             try {
@@ -91,8 +84,7 @@ public class SimulatedAnnealing{
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-            //System.out.printf("Best Solution: Weight - %d, Fitness - %d\n", bestInstance.weight, bestInstance
-            // .fitness);
+            System.out.printf("Best Solution: Weight - %d, Fitness - %d\n", bestInstance.weight, bestInstance.fitness);
 
             temperature = temperature * coolRate;
             iCounter ++;
@@ -105,10 +97,31 @@ public class SimulatedAnnealing{
         long totalTime = System.currentTimeMillis() - runtimeStart;
 
         SolutionInstance[] list_reportArray = report_array.toArray(new SolutionInstance[report_array.size()]);
-
         new Report(generateReport, config, reportString, list_reportArray, totalTime);
-
         return bestInstance;
+    }
+
+    public SolutionInstance generateRandomInstance(double startThreshold) {
+        SolutionInstance s = new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity);
+        boolean[] pos = new boolean[Driver.num_of_items];
+        Arrays.fill(pos, false);
+
+        double thresh = startThreshold;
+        do {
+            for (int c = 0; c < Driver.num_of_items; c++) {
+                if (SimulatedAnnealing.randomGenerator.nextDouble() < thresh) pos[c] = true;
+                else pos[c] = false;
+            }
+            s.setPosition(pos);
+            thresh = Math.max(0, thresh*0.9);
+        }while (s.isTooHeavy());
+
+        return s;
+    }
+
+    public double AcceptanceProbability(double currentFitness, double neighbourFitness, double temperature) {
+        double delta =  currentFitness - neighbourFitness;
+        return Math.exp( -1*delta / temperature);
     }
 
     public SolutionInstance getNeighbourInstance(SolutionInstance s) {
@@ -117,51 +130,25 @@ public class SimulatedAnnealing{
 
         // Play with random algorithm
         int iterations = randomGenerator.nextInt(1, 3);
-        //int iterations = 3;
         int bit;
-
 
         for (int i = 0; i < iterations; i++) {
             // Get random Bit, inclusive of both points
-            bit = randomGenerator.nextInt(0, 149);
-            while (neighbour.getBit(bit) == true) {
+            do {
                 bit = randomGenerator.nextInt(0, 149);
-            } // end when found bit == 0
-            bool_arr[bit] = true; // = 1
+            }while (!neighbour.getBit(bit)) ;
+            bool_arr[bit] = true;
         }
         neighbour.setPosition(bool_arr);
-
 
         // reduce until suitable
         while (neighbour.isTooHeavy()){
             bit = randomGenerator.nextInt(0, 149);
-            bool_arr[bit] = false; // = 0
+            bool_arr[bit] = false;
             neighbour.setPosition(bool_arr);
         }
-
-        s.calculateFitness();
         return neighbour;
     }
 
-    public SolutionInstance generateRandomInstance() {
-        SolutionInstance s = new SolutionInstance(Driver.Items, Driver.num_of_items, Driver.max_capacity);
-        do{
-            boolean[] pos = new boolean[Driver.num_of_items];
-            Arrays.fill(pos, false);
 
-            for(int c = 0; c < Driver.num_of_items; c++) {
-                if (SimulatedAnnealing.randomGenerator.nextDouble() < 0.4) pos[c] = true;
-                else pos[c] = false;
-            }
-            s.setPosition(pos);
-        } while (s.isTooHeavy());
-
-        return s;
-    }
-
-
-    public double AcceptanceProbability(double currentFitness, double neighbourFitness, double temperature) {
-        double delta =  currentFitness - neighbourFitness;
-        return Math.exp( -1*delta / temperature);
-    }
 }

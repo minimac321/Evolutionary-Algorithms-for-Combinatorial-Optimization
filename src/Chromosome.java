@@ -13,8 +13,8 @@ public class Chromosome implements Comparable<Chromosome>, Cloneable {
             e.printStackTrace();
         }
         Position = gene.stringSolution();
-        fitness = gene.calculateFitness();
         weight = gene.calculateWeight();
+        fitness = gene.calculateFitness();
     }
 
     @Override
@@ -23,16 +23,14 @@ public class Chromosome implements Comparable<Chromosome>, Cloneable {
     }
 
     public void generateRandom(double threshold) {
-        do{
-            boolean[] pos = new boolean[Driver.num_of_items];
-            Arrays.fill(pos, false);
+        boolean[] pos = new boolean[Driver.num_of_items];
+        Arrays.fill(pos, false);
 
-            for(int c = 0; c < Driver.num_of_items; c++) {
-                if (GeneticAlgorithm.randomGenerator.nextDouble() < threshold) pos[c] = true;
-                else pos[c] = false;
-            }
-            this.gene.setPosition(pos);
-        } while (this.gene.isTooHeavy());
+        for(int c = 0; c < Driver.num_of_items; c++) {
+            if (GeneticAlgorithm.randomGenerator.nextDouble() < threshold) pos[c] = true;
+            else pos[c] = false;
+        }
+        gene.setPosition(pos);
 
     }
 
@@ -54,24 +52,9 @@ public class Chromosome implements Comparable<Chromosome>, Cloneable {
     }
 
     public int compareTo(Chromosome chromosome) {
-        // Descending sorting, flipped minus sign
-        if (this.fitness < chromosome.fitness) {
-            return 1;
-        }
-        if (this.fitness > chromosome.fitness) {
-            return -1;
-        }
-        return 0;
-    }
+        int compareVal = ((Chromosome) chromosome).getFitness();
 
-    public boolean equals(Object o) {
-        if (!(o instanceof Chromosome)) {
-            return false;
-        }
-
-        Chromosome chromosome = (Chromosome) o;
-
-        return (gene.equals(chromosome.gene)) && (fitness == chromosome.fitness);
+        return compareVal - this.getFitness();
     }
 
 }

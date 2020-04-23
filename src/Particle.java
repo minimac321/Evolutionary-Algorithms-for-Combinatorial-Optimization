@@ -16,7 +16,7 @@ public class Particle implements Cloneable{
 
     public Particle(int minVelocity, int maxVelocity, double c1, double c2, double inertia, SolutionInstance solution) {
 
-        this.minVelocity = minVelocity;
+        this.minVelocity = minVelocity*-1;
         this.maxVelocity = maxVelocity;
         this.c1 = c1;
         this.c2 = c2;
@@ -30,7 +30,7 @@ public class Particle implements Cloneable{
         this.gBestInstance = currentInstance;
 
         generateRandomVel();
-        generatePosValues();
+        generatePosValues(0.2);
 
         // Size is solution.numItems
         Position = solution.stringSolution();
@@ -40,20 +40,15 @@ public class Particle implements Cloneable{
         return (Particle) super.clone();
     }
 
-    private void generatePosValues() {
+    private void generatePosValues(double threshold) {
         boolean[] pos = new boolean[150];
         Arrays.fill(pos, false);
 
         for(int v = 0; v < Velocity.length; v++) {
-                                                                    // sigmoid(Velocity[v])
-            if (ParticleSwarmOptimization.randomGenerator.nextDouble() < 0.2) pos[v] = true;
+            if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold) pos[v] = true;
             else pos[v] = false;
         }
-
         currentInstance.setPosition(pos);
-        //System.out.println(String.valueOf(currentInstance.calculateFitness()) + " - " + String.valueOf
-        // (currentInstance.calculateWeight()));
-
     }
 
     public void setCurrentInstance(SolutionInstance s){
@@ -65,8 +60,7 @@ public class Particle implements Cloneable{
     }
 
     public void updatePbestSolution() {
-
-        if (pBestInstance.fitness < currentInstance.fitness && !currentInstance.isTooHeavy()){
+        if ( (pBestInstance.fitness < currentInstance.fitness) && (currentInstance.fitness != 0) ){
             try {
                 pBestInstance = currentInstance.clone();
             } catch (CloneNotSupportedException e) {
@@ -87,7 +81,7 @@ public class Particle implements Cloneable{
 
         for(int v = 0; v < Velocity.length; v++) {
             // create number between 0-1 and * VMAX
-            double vel = ParticleSwarmOptimization.randomGenerator.nextDouble() * maxVelocity;
+            double vel = checkBoundaries(ParticleSwarmOptimization.randomGenerator.nextDouble() * maxVelocity) ;
 
             if (!ParticleSwarmOptimization.randomGenerator.nextBoolean()) {
                 Velocity[v] = vel * -1;
@@ -95,7 +89,6 @@ public class Particle implements Cloneable{
                 Velocity[v] = vel;
             }
         }
-        //Arrays.fill(Velocity, minVelocity);
     }
 
     private double checkBoundaries(double v) {
@@ -108,20 +101,20 @@ public class Particle implements Cloneable{
     public void setGbest(SolutionInstance s){
         try {
             this.gBestInstance = s.clone();
-            this.gBestInstance.calculateFitness();
             this.gBestInstance.calculateWeight();
+            this.gBestInstance.calculateFitness();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
     }
 
     public void updateMetrics(){
-        this.currentInstance.calculateFitness();
         this.currentInstance.calculateWeight();
-        this.pBestInstance.calculateFitness();
+        this.currentInstance.calculateFitness();
         this.pBestInstance.calculateWeight();
-        this.gBestInstance.calculateFitness();
+        this.pBestInstance.calculateFitness();
         this.gBestInstance.calculateWeight();
+        this.gBestInstance.calculateFitness();
     }
 
     public int getFitness(){
@@ -145,17 +138,12 @@ public class Particle implements Cloneable{
             pBest = Character.getNumericValue(pBestInstance.stringSolution().charAt(i));
             gBest = Character.getNumericValue(gBestInstance.stringSolution().charAt(i));
 
-            Velocity[i] = Velocity[i] * inertia + c1 * r1 * (pBest - current) + c2 * r2 * (gBest - current);
+            Velocity[i] =
+                    checkBoundaries(Velocity[i] * inertia + c1 * r1 * (pBest - current) + c2 * r2 * (gBest - current));
         }
-            // trace
-            //System.out.println("Velocities: " + Arrays.toString(Arrays.copyOf(Velocity, 5)));
 
         pos = new boolean[150];
-        threshold = 0.2;
-
-        // ISSUE HERE // - find correct algorithm for when to choose
         for(int v = 0; v < Velocity.length; v++) {
-            // sigmoid(Velocity[v])
             if (ParticleSwarmOptimization.randomGenerator.nextDouble() < sigmoid(Velocity[v])){
                 pos[v] = true;
             }
@@ -163,26 +151,10 @@ public class Particle implements Cloneable{
                 pos[v] = false;
             }
         }
-
         //System.out.printf("Before: %d - %s\n", currentInstance.fitness, currentInstance.stringSolution());
         currentInstance.setPosition(pos);
-        currentInstance.calculateWeight();
         //System.out.printf("After: %d - %s\n", currentInstance.calculateFitness(), currentInstance.stringSolution());
 
-        int iRetry = 0;
-        while (currentInstance.isTooHeavy()){
-            iRetry++;
-            threshold-=0.03;
-            for(int v = 0; v < Velocity.length; v++) {
-                // sigmoid(Velocity[v])
-                if (ParticleSwarmOptimization.randomGenerator.nextDouble() < threshold) pos[v] = true;
-                else pos[v] = false;
-            }
-            currentInstance.setPosition(pos);
-        } // end while
-
-        //trace
-        //System.out.printf("Retry occurred %d times\n", iRetry);
     }
 
 }
