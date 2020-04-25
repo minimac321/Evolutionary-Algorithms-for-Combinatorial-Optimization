@@ -46,7 +46,9 @@ public class ParticleSwarmOptimization {
         boolean bChange;
         ArrayList<Integer> gBestArray= new ArrayList<Integer>();
 
-        RandomInitialize(0.2);
+        RandomInitialize(0.4);
+
+
 
         // Must also make first addition in all arrays
         int iMax = 0;
@@ -55,7 +57,10 @@ public class ParticleSwarmOptimization {
 
         for (int iter = 0; iter < Driver.max_iterations; iter++){
 
-            System.out.printf("***************** Iteration %d *****************\n", iter);
+            if (iter%100 == 0){
+                printSwarm();
+                System.out.printf("***************** Iteration %d *****************\n", iter);
+            }
 
             // for each particle:
             for (int a = 0; a < particleNums; a++ ) {
@@ -114,14 +119,23 @@ public class ParticleSwarmOptimization {
         long totalTime = System.currentTimeMillis() - runtimeStart;
 
         SolutionInstance bestSolution = Swarm[0].gBestInstance;
-        //System.out.printf("Knapsack: %s\n" + "Best solution value is: %d\n", bestSolution.toString(), bestSolution
-        // .fitness);
-        //System.out.println(gBestArray);
+
+        if (!generateReport) {
+            System.out.printf("Optimal Output: fitness = %5d | weight = %5d\n", bestSolution.fitness,
+                    bestSolution.weight);
+        }
 
         SolutionInstance[] list_reportArray = report_array.toArray(new SolutionInstance[report_array.size()]);
         new Report(generateReport, config, reportString, list_reportArray, totalTime);
-
         return bestSolution;
+    }
+
+    public void printSwarm(){
+        String sOut = "";
+        for (int i = 0; i < Swarm.length; i++) {
+            sOut+= String.valueOf(Swarm[i].currentInstance.fitness) +", ";
+        }
+        System.out.println(sOut);
     }
 
     public void reshuffled() {

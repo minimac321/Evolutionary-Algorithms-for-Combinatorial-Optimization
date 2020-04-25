@@ -57,15 +57,15 @@ public class Driver {
                 System.out.printf("Loading and running: %s now\n", name);
 
                 if (algorithm_name.equals("ga")){
-                    result = runGA(name, true);
+                    result = runGA(name, false);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("sa")){
-                    result = runSA(name, true);
+                    result = runSA(name, false);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("pso")){
-                    result = runPSO(name, true);
+                    result = runPSO(name, false);
                     bestResults.add(result);
                 }
             }
@@ -84,7 +84,7 @@ public class Driver {
             num += String.valueOf(iPos+1);
 
             assert result != null;
-            System.out.printf("Best Solution is: %s, Score - %d\n", num, max);
+            System.out.printf("Best Solution is: %s\nScore - %d\n", num, max);
 
             makeBestJSONFile(algorithm_name, num);
         }
