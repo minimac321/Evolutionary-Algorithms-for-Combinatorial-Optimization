@@ -48,8 +48,6 @@ public class ParticleSwarmOptimization {
 
         RandomInitialize(0.4);
 
-
-
         // Must also make first addition in all arrays
         int iMax = 0;
         long runtimeStart = System.currentTimeMillis();
@@ -57,10 +55,10 @@ public class ParticleSwarmOptimization {
 
         for (int iter = 0; iter < Driver.max_iterations; iter++){
 
-            if (iter%100 == 0){
-                printSwarm();
-                System.out.printf("***************** Iteration %d *****************\n", iter);
-            }
+//            if (iter%100 == 0){
+//                printSwarm();
+//                System.out.printf("***************** Iteration %d *****************\n", iter);
+//            }
 
             // for each particle:
             for (int a = 0; a < particleNums; a++ ) {
@@ -79,7 +77,7 @@ public class ParticleSwarmOptimization {
                     try{
                         bChange = true;
                         tmp = Swarm[p].currentInstance.clone();
-                        System.out.printf("New global Maximum. Previous = %d, New = %d\n", iMax, tmp.fitness);
+                        //System.out.printf("New global Maximum. Previous = %d, New = %d\n", iMax, tmp.fitness);
                         iMax = tmp.fitness;
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
@@ -92,7 +90,6 @@ public class ParticleSwarmOptimization {
                 mostRecentGBest = iter;
                 updateGbest(tmp);
             }
-
             // Update positions
             for (int j = 0; j < particleNums; j++ ) {
                 // Update velocities
@@ -100,10 +97,9 @@ public class ParticleSwarmOptimization {
                 Swarm[j].getNewPositions();
                 //System.out.printf("New  Pos: %s\n", Swarm[p].currentInstance.toString());
             }
-            // If stagnanent for 500 iterations, reshuffle all particles
+            // If stagnant for 500 iterations, reshuffle all particles
             if (iter - mostRecentGBest > 500){
                 reshuffled();
-                System.out.println("============= Reshuffled =============");
                 mostRecentGBest = iter;
             }
 
@@ -117,13 +113,7 @@ public class ParticleSwarmOptimization {
         }// end iteration loop
 
         long totalTime = System.currentTimeMillis() - runtimeStart;
-
         SolutionInstance bestSolution = Swarm[0].gBestInstance;
-
-        if (!generateReport) {
-            System.out.printf("Optimal Output: fitness = %5d | weight = %5d\n", bestSolution.fitness,
-                    bestSolution.weight);
-        }
 
         SolutionInstance[] list_reportArray = report_array.toArray(new SolutionInstance[report_array.size()]);
         new Report(generateReport, config, reportString, list_reportArray, totalTime);

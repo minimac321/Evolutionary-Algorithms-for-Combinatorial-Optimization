@@ -2,6 +2,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,10 +21,15 @@ public class Driver {
 
         PopulateItems(150);
 
-
         if (args[0].equals("-configuration")){
 
             String name = args[1] ;
+            if (!name.contains(".json")){
+                System.out.println("File error, Try add .json to the file name");
+                System.exit(0);
+            }
+            name = name.substring(0, name.length()-5);
+
             System.out.printf("Loading and running: %s now\n", name);
 
             if (name.contains("ga")){
@@ -57,33 +63,36 @@ public class Driver {
                 System.out.printf("Loading and running: %s now\n", name);
 
                 if (algorithm_name.equals("ga")){
-                    result = runGA(name, false);
+                    result = runGA(name, true);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("sa")){
-                    result = runSA(name, false);
+                    result = runSA(name, true);
                     bestResults.add(result);
                 }
                 else if (algorithm_name.equals("pso")){
-                    result = runPSO(name, false);
+                    result = runPSO(name, true);
                     bestResults.add(result);
                 }
             }
 
             int max = Integer.MIN_VALUE;
             int iPos = -1;
+            int[] arr_final = new int[bestResults.size()];
             for (int i = 0; i < bestResults.size(); i++) {
                 if (max < bestResults.get(i).fitness){
                     max = bestResults.get(i).fitness;
                     iPos = i;
                 }
+                arr_final[i] = bestResults.get(i).fitness;
             }
 
             String num = "";
             if (iPos+1 < 10) num += "0";
             num += String.valueOf(iPos+1);
 
-            assert result != null;
+
+            System.out.printf("Best of each: %s\n", Arrays.toString(arr_final));
             System.out.printf("Best Solution is: %s\nScore - %d\n", num, max);
 
             makeBestJSONFile(algorithm_name, num);

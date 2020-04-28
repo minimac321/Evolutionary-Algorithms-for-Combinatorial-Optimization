@@ -52,9 +52,9 @@ public class GeneticAlgorithm {
         RandomInitialization();
 
         // Sort DESCENDING array according to fitness => comparable already added
-        printPopulation(population);
+        //printPopulation(population);
         Arrays.sort(population);
-        printPopulation(population);
+        //printPopulation(population);
 
         Chromosome bestChromosome = null;
         try {
@@ -62,19 +62,18 @@ public class GeneticAlgorithm {
             do{
                 bestChromosome = population[j].clone();
                 bestChromosome.updateMetrics();
-                if (j>1) System.out.println("Zero value @ start");
+                if (j>1) System.out.println("ERROR: Zero value @ start");
             }while (population[j++].getFitness() == 0);
 
             currentBestFitness = bestChromosome.getFitness();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-
         long runtimeStart = System.currentTimeMillis();
         int iter = 0;
 
         while ( iter < Driver.max_iterations ) {
-            System.out.printf("Best Chromosome: %d\n", bestChromosome.getFitness());
+            //System.out.printf("Best Chromosome: %d\n", bestChromosome.getFitness());
             try {
                 report_array[iter] = bestChromosome.gene.clone();
             } catch (CloneNotSupportedException e) {
@@ -102,16 +101,12 @@ public class GeneticAlgorithm {
             iter++;
 
         }// End While loop
-
         long totalTime = System.currentTimeMillis() - runtimeStart;
 
-        //System.out.println("generation                  : " + String.valueOf(i));
-        System.out.println("best fitness                : " + String.valueOf(bestChromosome.getFitness()) );
-        //System.out.println("best weight                : " + String.valueOf(bestChromosome.getWeight()) );
-        System.out.println("runtime                     : " + totalTime + " ms");
-        System.out.println("numberOfCrossoverOperations : " + numberOfCrossoverOperations);
-        System.out.println("numberOfMutationOperations  : " + numberOfMutationOperations);
-        //System.out.println(bestChromosome.gene.toString());
+        if (!generateReport) {
+            System.out.println("numberOfCrossoverOperations : " + numberOfCrossoverOperations);
+            System.out.println("numberOfMutationOperations  : " + numberOfMutationOperations);
+        }
 
         new Report(generateReport, config, reportString, report_array, totalTime);
         return bestChromosome.gene;

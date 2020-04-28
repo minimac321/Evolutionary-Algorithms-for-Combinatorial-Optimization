@@ -32,7 +32,6 @@ public class Particle implements Cloneable{
         generateRandomVel();
         generatePosValues(0.2);
 
-        // Size is solution.numItems
         Position = solution.stringSolution();
     }
     @Override
@@ -74,11 +73,9 @@ public class Particle implements Cloneable{
         double answer = 0.0;
         answer = 1/ (1 + Math.exp(-d));
         return answer;
-
     }
 
     private void generateRandomVel() {
-
         for(int v = 0; v < Velocity.length; v++) {
             // create number between 0-1 and * VMAX
             double vel = checkBoundaries(ParticleSwarmOptimization.randomGenerator.nextDouble() * maxVelocity) ;
@@ -94,7 +91,6 @@ public class Particle implements Cloneable{
     private double checkBoundaries(double v) {
         if (v > maxVelocity) return maxVelocity;
         if (v < minVelocity) return minVelocity;
-
         return v;
     }
 
@@ -151,10 +147,7 @@ public class Particle implements Cloneable{
                 pos[v] = false;
             }
         }
-        //System.out.printf("Before: %d - %s\n", currentInstance.fitness, currentInstance.stringSolution());
         currentInstance.setPosition(pos);
-        //System.out.printf("After: %d - %s\n", currentInstance.calculateFitness(), currentInstance.stringSolution());
-
     }
 
 }

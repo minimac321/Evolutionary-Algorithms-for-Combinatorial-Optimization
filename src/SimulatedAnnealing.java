@@ -59,26 +59,21 @@ public class SimulatedAnnealing{
 
                 // If new is greater than old; replace old by new
                 if (delta <= 0) {
-                    //System.out.println("Neg Delta, current = Neighbour");
                     try {
                         currentInstance = neighbour.clone();
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    //System.out.println("Positive delta");
                     if (AcceptanceProbability(currentFitness, neighbourFitness, temperature) >= randomGenerator.nextDouble()) {
                         try {
-                            //System.out.println("Make current = Neighbour");
                             currentInstance = neighbour.clone();
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        //System.out.println("Keep Current");
                     }
                 }
-
                 if (currentInstance.calculateFitness() > bestInstance.calculateFitness()) {
                     try {
                         bestInstance = currentInstance.clone();
@@ -96,34 +91,22 @@ public class SimulatedAnnealing{
                 }
                 //System.out.printf("Best Solution: Fitness - %d, Weight - %d\n", bestInstance.fitness, bestInstance
                 // .weight);
-
                 temperature = temperature * coolRate;
                 iCounter++;
             }
-
             try {
                 currentInstance = bestInstance.clone();
                 temperature = maxTemp;
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-
         } // End for
         long totalTime = System.currentTimeMillis() - runtimeStart;
-
-        if (!generateReport) {
-            System.out.printf("Finished with Simulation after %d iterations\n", iCounter);
-            System.out.printf("Optimal Output: fitness = %5d | weight = %5d |  temp = %5.2f\n", bestInstance.fitness,
-                    bestInstance.weight, temperature);
-            //System.out.println(bestInstance.toString());
-        }
-
 
         ArrayList<SolutionInstance> arr_report = new ArrayList<>(Driver.max_iterations);
         for (int q = 0; q < Driver.max_iterations; q++) {
             arr_report.add(report_array.get(q));
         }
-
         SolutionInstance[] list_reportArray = arr_report.toArray(new SolutionInstance[arr_report.size()]);
         new Report(generateReport, config, reportString, list_reportArray, totalTime);
         return bestInstance;
@@ -143,7 +126,6 @@ public class SimulatedAnnealing{
             s.setPosition(pos);
             thresh = Math.max(0, thresh*0.9);
         }while (s.isTooHeavy());
-
         return s;
     }
 
@@ -156,22 +138,16 @@ public class SimulatedAnnealing{
         boolean[] bool_arr = s.Solution.clone();
         SolutionInstance neighbour = new SolutionInstance(s.Items, s.numItems, s.capacity, bool_arr);
 
-        // Play with random algorithm
+        // Play with random algorithm - not just a single bit
         int iterations = randomGenerator.nextInt(1, 3);
         int bit;
 
         for (int i = 0; i < iterations; i++) {
-            // Get random Bit, inclusive of both points
             do {
                 bit = randomGenerator.nextInt(0, 149);
             }while (neighbour.getBit(bit)) ;
             bool_arr[bit] = true;
         }
-        if (bool_arr.equals(s.getBoolArray())) {
-            System.out.println("Equal boolean[]");
-            System.exit(0);
-        }
-
         neighbour.setPosition(bool_arr);
 
         while (neighbour.isTooHeavy()){
@@ -181,6 +157,4 @@ public class SimulatedAnnealing{
         }
         return neighbour;
     }
-
-
 }
