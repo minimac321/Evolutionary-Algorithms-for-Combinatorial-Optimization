@@ -1,8 +1,9 @@
 # Knapsack-Solver
 
-Solving the Knapsack problem (150 Items) using Evolutionary Algorithms.  
+Solving the NP-complete Knapsack problem (150 Items) using Evolutionary Algorithms.  
 
-#### What is the Knapsack Problem:
+
+#### What is the Knapsack Combinatorial Optimization Problem:
 Given a set of items, each with a weight and a value, determine which items to include in the collection so that the total weight is less than or equal to a given limit and the total value is as large as possible
 
 
