@@ -19,12 +19,12 @@ The 3 algorithms implemented are:
 Each configuration is run for 10000 iterations and compared to the best know optimum of 997 in the report.  
 
 For a single configuration of a specified algorithm [ga | sa | pso] and configuration number (between 1 and 25) run this command line with a file name
-```
--configuration [name]_default_[configuration-number].json
-```
+```-configuration [name]_default_[configuration-number].json```
 where the name could be: "ga_default_01"
 
-e.g. ```-configuration ga_default_01.json```
+```
+-configuration ga_default_01.json
+```
 
 A report will be generated into `Default_Output` folder.  
 
@@ -32,7 +32,7 @@ A report will be generated into `Default_Output` folder.
 To search for the best configuration of ALL algorithm configurations, run this command:  
 `-search_best_configuration [ga | sa | pso]`
 
-e.g. `-search_best_configuration ga`  
+```-search_best_configuration ga```  
 
 Once the best is found, it will be written into a JSON file called [ga | sa | pso]_best.json under the `Best Output` folder  
 
