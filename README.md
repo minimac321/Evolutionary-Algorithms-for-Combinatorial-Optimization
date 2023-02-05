@@ -1,14 +1,37 @@
 # Knapsack-Solver
-Solve the Knapsack problem (150 Items) using Evolutionary Algorithms.  
-The 3 algorithms implemented are Simulated Annealing(SA), Genetic Algorithm(GA), and Particle Swarm Optimization(PSO).  
+
+Solving the Knapsack problem (150 Items) using Evolutionary Algorithms.  
+
+#### What is the Knapsack Problem:
+Given a set of items, each with a weight and a value, determine which items to include in the collection so that the total weight is less than or equal to a given limit and the total value is as large as possible
+
+
+The 3 algorithms implemented are:
+  - [Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing) (SA)
+    - is a probabilistic technique for approximating the global optimum of a given function.
+  - [Genetic Algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm) (GA)
+    - is a method for solving both constrained and unconstrained optimization problems that is based on natural selection, the process that drives biological evolution.
+  - [Particle Swarm Optimization](https://en.wikipedia.org/wiki/Particle_swarm_optimization) (PSO)
+    -  is a computational method that optimizes a problem by iteratively trying to improve a candidate solution with regard to a given measure of quality.
+
+
 Each configuration is run for 10000 iterations and compared to the best know optimum of 997 in the report.  
-  
-To run a single configuration, input:  
-    "-configuration [name].json"  
-which will run the specified algorithm and generate a report in the Default_Output folder.  
-e.g. "-configuration ga_default_01.json"  
-  
-To search for the best configuration of any algorithm, input:  
-    "-search_best_configuration [ga | sa | pso]"  
-which will run all the selected algorithm's configurations to find the best. Once the best is found, it will be written into a JSON file called [ga | sa | pso]_best.json under the Best Output folder  
-e.g. "-search_best_configuration ga"  
+
+For a single configuration of a specified algorithm [ga | sa | pso] and configuration number (between 1 and 25) run this command line with a file name
+```
+-configuration [name]_default_[configuration-number].json
+```
+where the name could be: "ga_default_01"
+
+e.g. ```-configuration ga_default_01.json```
+
+A report will be generated into `Default_Output` folder.  
+
+
+To search for the best configuration of ALL algorithm configurations, run this command:  
+`-search_best_configuration [ga | sa | pso]`
+
+e.g. `-search_best_configuration ga`  
+
+Once the best is found, it will be written into a JSON file called [ga | sa | pso]_best.json under the `Best Output` folder  
+
